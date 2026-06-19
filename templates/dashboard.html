@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>AI-WAF Dashboard</title>
+</head>
+<body>
+    <div class="dashboard-nav">
+        <span><strong>ShieldAI</strong> Web Firewall</span>
+        <a href="/logout">Logout ({{ current_user.username }})</a>
+    </div>
+    
+    <div class="container" style="max-width: 900px;">
+        <h2>Semantic Payload Analysis</h2>
+        <p style="color: #aaa; font-size: 14px; margin-bottom: 20px;">Manual testing interface for AI inspection.</p>
+        
+        <form method="POST">
+            <textarea name="payload" rows="3" placeholder="e.g., <script>alert(1)</script> or SELECT * FROM users..." required>{{ payload }}</textarea>
+            <button type="submit" class="btn-analyze">Run Manual AI Inspection</button>
+        </form>
+
+        {% if result %}
+            <div class="result-box {{ result.lower() }}">
+                <div style="font-size: 12px; color: #888; margin-bottom: 5px;">> SYS_CLASSIFICATION_RESULT:</div>
+                <h1>[{{ result }}]</h1>
+                <p style="font-size: 14px; color: #ccc;">The system has determined this traffic is <strong>{{ result.lower() }}</strong>.</p>
+                <div style="font-size: 12px; color: #888; margin-top: 15px;">> AI_CONFIDENCE_METRIC: {{ confidence }}%</div>
+            </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 20px; margin-top: 40px;">
+            
+            <div style="flex: 2;">
+                <h3 style="font-size: 14px; color: #888; font-family: 'Courier New', monospace;">> RECENT_INSPECTION_LOGS</h3>
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Time (UTC)</th>
+                            <th>IP Address</th>
+                            <th>Payload Snippet</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.timestamp.strftime('%H:%M:%S') }}</td>
+                            <td style="color: #007bff;">{{ log.ip_address }}</td>
+                            <td title="{{ log.payload }}">{{ log.payload[:25] }}{% if log.payload|length > 25 %}...{% endif %}</td>
+                            <td class="{% if log.result == 'MALICIOUS' %}text-red{% else %}text-green{% endif %}">{{ log.result }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px;">No server logs recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="flex: 1;">
+                <h3 style="font-size: 14px; color: #ff4d4d; font-family: 'Courier New', monospace;">> ACTIVE_IP_BLACKLIST</h3>
+                <table class="log-table" style="border: 1px solid #ff4d4d; box-shadow: 0 0 10px rgba(255, 77, 77, 0.1);">
+                    <thead>
+                        <tr>
+                            <th style="color: #ff4d4d;">Banned IP</th>
+                            <th style="color: #ff4d4d;">Ban Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tbody>
+                            {% for ban in banned %}
+                            <tr>
+                                <td class="text-red"><strong>{{ ban.ip_address }}</strong></td>
+                                <td>{{ ban.ban_time.strftime('%H:%M:%S') }}</td>
+                                <td style="text-align: right;">
+                                    <form action="{{ url_for('unblock', ip=ban.ip_address) }}" method="POST" style="margin: 0;">
+                                        <button type="submit" style="background: #2ea043; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">UNBAN</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 20px; color: #888;">No IPs currently banned.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
