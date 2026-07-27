@@ -241,6 +241,20 @@ SRM Institute of Science and Technology
 B.Tech Computer Science and Engineering (Cybersecurity)
 SRM Institute of Science and Technology
 
+<h2>📸 Screenshots</h2>
+
+<h3>Benign Request Detection</h3>
+
+<p align="center">
+  <img src="benign-output.png" width="800">
+</p>
+
+<h3>Malicious Request Detection</h3>
+
+<p align="center">
+  <img src="malicious-output.png" width="800">
+</p>
+
 ## License
 
 This project is released for academic, research, and educational purposes.
