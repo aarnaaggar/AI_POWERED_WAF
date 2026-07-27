@@ -246,13 +246,13 @@ SRM Institute of Science and Technology
 <h3>Benign Request Detection</h3>
 
 <p align="center">
-  <img src="benign output.png" width="800">
+  <img src="benign.png" width="800">
 </p>
 
 <h3>Malicious Request Detection</h3>
 
 <p align="center">
-  <img src="malicious output.png" width="800">
+  <img src="malicious.png" width="800">
 </p>
 
 ## License
